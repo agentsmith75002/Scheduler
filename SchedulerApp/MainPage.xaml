@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SchedulerApp"
+    xmlns:data="using:DataAccess.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -12,6 +13,43 @@
     </Page.DataContext>
     <Page.Resources>
         <local:NullToVisibilityConverter x:Key="nullToVisibilityConverter" />
+        <!--#region DataTemplate-->
+        <!-- When using x:Bind, you need to set x:DataType -->
+        <DataTemplate x:Name="projectGridViewTemplate" x:DataType="data:Project">
+            <StackPanel Orientation="Vertical">
+                <Rectangle x:Name="rectangle" 
+                             Height="30"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"
+                             Fill="LightGray"
+                             Margin="4,4,4,4"/>
+                <!-- Phase 2: TextBlock with project name-->
+                <TextBlock x:Name="projectName" 
+                               Margin="4,4,0,4"
+                               Text="{x:Bind Name}" 
+                               x:Phase="2" 
+                               Style="{ThemeResource BodyTextBlockStyle}" 
+                               HorizontalAlignment="Center"/>
+                <!-- Phase 3: TextBlock with begin date-->
+                <TextBlock x:Name="dateDebut" 
+                               Text="{x:Bind BeginDate}" 
+                               Margin="4,4,0,4"
+                               x:Phase="3" 
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               FontSize="12"
+                               Foreground="Gray"
+                               HorizontalAlignment="Center"/>
+                <!-- Phase 4: TextBlock with end date-->
+                <TextBlock x:Name="dateFin" 
+                               Text="{x:Bind EndDate}" 
+                               Margin="4,4,0,4"
+                               x:Phase="3" 
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               FontSize="12"
+                               Foreground="Gray"
+                               HorizontalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -20,7 +58,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Button Content="Load" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="0" Command="{Binding ShowProjectsCmd}"/>
-        <ListView Grid.Row="1" ItemsSource="{Binding Projects}"></ListView>
-        <TextBlock Grid.Row="2" Text="{Binding ErrorMsg}" FontStyle="Italic" Visibility="{Binding ErrorMsg, Converter={StaticResource nullToVisibilityConverter}}" />
+        <GridView ItemsSource="{Binding Projects}"
+                  ItemTemplate="{StaticResource projectGridViewTemplate}"
+                  Grid.Row="1" >
+        </GridView>
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMsg}" Foreground="Red" Visibility="{Binding ErrorMsg, Converter={StaticResource nullToVisibilityConverter}}" />
     </Grid>
 </Page>
